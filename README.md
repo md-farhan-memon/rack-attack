@@ -10,6 +10,10 @@ See the [Backing & Hacking blog post](https://www.kickstarter.com/backing-and-ha
 [![Build Status](https://travis-ci.org/kickstarter/rack-attack.svg?branch=master)](https://travis-ci.org/kickstarter/rack-attack)
 [![Code Climate](https://codeclimate.com/github/kickstarter/rack-attack.svg)](https://codeclimate.com/github/kickstarter/rack-attack)
 
+# NOTE / Added feature
+
+#### Support for passing an array of IP addresses added to safelist or blocklist.
+
 ## Table of contents
 
 - [Getting started](#getting-started)
@@ -18,10 +22,12 @@ See the [Backing & Hacking blog post](https://www.kickstarter.com/backing-and-ha
 - [Usage](#usage)
   - [Safelisting](#safelisting)
     - [`safelist_ip(ip_address_string)`](#safelist_ipip_address_string)
+    - [`safelist_ips(ip_addresses_array)`](#safelist_ipsip_addresses_array)
     - [`safelist_ip(ip_subnet_string)`](#safelist_ipip_subnet_string)
     - [`safelist(name, &block)`](#safelistname-block)
   - [Blocking](#blocking)
     - [`blocklist_ip(ip_address_string)`](#blocklist_ipip_address_string)
+    - [`blocklist_ips(ip_addresses_array)`](#blocklist_ipsip_addresses_array)
     - [`blocklist_ip(ip_subnet_string)`](#blocklist_ipip_subnet_string)
     - [`blocklist(name, &block)`](#blocklistname-block)
     - [Fail2Ban](#fail2ban)
@@ -107,6 +113,18 @@ E.g.
 Rack::Attack.safelist_ip("5.6.7.8")
 ```
 
+#### `safelist_ips(ip_addresses_array)`
+
+E.g.
+
+```ruby
+# config/initializers/rack_attack.rb (for rails app)
+
+ALLOWED_IPS = %w[127.0.0.1 ::1 5.6.7.8 123.456.789.0/24]
+
+Rack::Attack.safelist_ips(ALLOWED_IPS)
+```
+
 #### `safelist_ip(ip_subnet_string)`
 
 E.g.
@@ -152,6 +170,18 @@ E.g.
 # config/initializers/rack_attack.rb (for rails apps)
 
 Rack::Attack.blocklist_ip("1.2.3.4")
+```
+
+#### `blocklist_ips(ip_addresses_array)`
+
+E.g.
+
+```ruby
+# config/initializers/rack_attack.rb (for rails apps)
+
+BLOCKED_IPS = %w[1.2.3.4 123.456.789.0/24]
+
+Rack::Attack.blocklist_ips(BLOCKED_IPS)
 ```
 
 #### `blocklist_ip(ip_subnet_string)`
