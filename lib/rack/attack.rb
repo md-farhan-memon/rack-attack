@@ -9,6 +9,7 @@ require "ipaddr"
 class Rack::Attack
   class MisconfiguredStoreError < StandardError; end
   class MissingStoreError < StandardError; end
+  class ParameterMismatchError < StandardError; end
 
   autoload :Cache,                'rack/attack/cache'
   autoload :Check,                'rack/attack/check'
@@ -55,6 +56,22 @@ class Rack::Attack
 
     def safelist_ip(ip_address)
       anonymous_safelists << Safelist.new { |request| IPAddr.new(ip_address).include?(IPAddr.new(request.ip)) }
+    end
+
+    def blocklist_ips(ip_address_list)
+      if ip_address_list.is_a?(Array)
+        ip_address_list.each { |ip_address| blocklist_ip(ip_address) }
+      else
+        raise Rack::Attack::ParameterMismatchError, "Expecting an Array of IP addresses instead found #{ip_address_list}"
+      end
+    end
+
+    def safelist_ips(ip_address_list)
+      if ip_address_list.is_a?(Array)
+        ip_address_list.each { |ip_address| safelist_ip(ip_address) }
+      else
+        raise Rack::Attack::ParameterMismatchError, "Expecting an Array of IP addresses instead found #{ip_address_list}"
+      end
     end
 
     def throttle(name, options, &block)
